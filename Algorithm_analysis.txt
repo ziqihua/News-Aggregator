@@ -1,0 +1,71 @@
+# parseFeed
+BigO runtime: O(m * n * p * q)
+
+Explanation of runtime:
+n: Number of feed URLs.
+m: Average number of link elements per feed document.
+p: Average number of body elements per linked document.
+q: Average number of characters in each body's text content.
+Each factor contributes multiplicatively to the total computational workload, as the operations to fetch and process content are nested within each other.
+The expression O(n×m×p×q) captures how each level of nesting adds a layer of complexity based on the size of the data it processes.
+
+Data structures used: List (List<String> feeds), HashMap (Map<String, List<String>> wordsMap),
+ArrayList (List<String> words), Document, Elements, Element (from Jsoup)
+
+
+# buildIndex
+BigO runtime: O(n*m + n*k). Assume m = k for simplicity in documents with similar term counts: O(n*k)
+
+Explanation of runtime:
+n: Represents the number of documents in the provided map docs.
+m: Represents the number of terms in a single document. More specifically, it is the average number of terms per document, considering that each document might have a different number of terms.
+k: Represents the number of unique terms across all documents. This is the total count of distinct terms that appear in any document within the dataset.
+O(n*m): This part of the expression deals with the effort of calculating the Term Frequency (TF) for each term in each document, hence multiplied by the number of documents
+n and the average number of terms per document m.
+O(n*k): This reflects the effort involved in computing the Inverse Document Frequency (IDF)
+
+Data structures used: HashMap, TreeMap, HashSet
+
+
+# buildInvertedIndex
+BigO runtime: O(n*m + t*n'logn')
+
+Explanation of runtime:
+Populating the lists: O(n×m)
+Sorting the lists: O(n'logn') for each term, potentially across many terms.
+If t is the total number of unique terms across all documents, then the overall sorting cost can be aggregated as O(t*n'logn')
+
+Data structures used: HashMap, ArrayList, AbstractMap.SimpleEntry, Comparator
+
+
+# buildHomePage
+BigO runtime: O(t*n + t*logt)
+
+Explanation of runtime:
+3 steps are involved: Removing Stop Words, Iterating and Transforming Entries, and Sorting.
+In scenarios where t and n are significantly large, then t×n term (due to the stream operations for each term) will dominate, but the sorting term
+t*logt also becomes significant as t increases.
+
+Data structures used: HashMap, ArrayList, HashSet, Comparator, Stream API and Collectors
+
+
+# createAutocompleteFile
+BigO runtime: O(n*logn)
+
+Explanation of runtime:
+3 steps are involved: Extract Words, Sort Words, Write to File.
+The sortWords method sorts these terms using natural order. Sorting n terms generally requires
+O(nlogn) time using comparison-based sorting algorithms.
+
+Data structures used: List, Comparator, Stream API and Collectors, BufferedWriter, Path
+
+
+# searchArticles
+BigO runtime: O(n)
+
+Explanation of runtime:
+2 steps are involved: Direct Lookup in Inverted Index, Extract Article URLs
+The overall time complexity of the searchArticles method is dominated by the list processing in extractArticleURLs, making it
+O(n), where n is the number of articles associated with the query term.
+
+Data structures used: List, Map (Inverted Index), Stream API, ArrayList
